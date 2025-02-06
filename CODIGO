@@ -1,0 +1,144 @@
+Listar os Bancos disponíveis
+show databases;
+
+--Criar um banco de dados
+create database Banco_licomp_242;
+
+--Acessar o Banco_licomp_242
+use Banco_licomp_242;
+
+--Criar uma tabela conforme o slide 15
+create table bancos(
+numero int not null,
+nome varchar(100) not null,
+constraint bancos_pk primary key(numero)
+);
+-- visualizar a estrutura da tabela bancos
+desc bancos;
+
+-- adicionar a coluna telefone, com tamanho 14 na tabela bancos
+alter table bancos
+add telefone varchar(14);
+
+-- criar a tabela clientes, conforme especificado no slide 18
+create table clientes(
+id int not null auto_increment,
+nome varchar(100) not null,
+email varchar(100) not null,
+constraint clientes_pk primary key(id)
+);
+-- adicione à tabela clientes a coluna UF, do tipo caractere, com tamanho 2 e valor padrão 'RJ'
+alter table clientes
+add uf char(2) default 'RJ';
+
+-- adicionar à tabela clientes as colunas dia e mês aniverário, do tipo inteiro e não obrigatórios
+alter table clientes
+add dia_niver int,
+add mes_niver int;
+
+-- comando para listar as regras de um banco de dados
+select constraint_name, constraint_type, table_name
+from information_schema.table_constraints
+where table_schema = 'bancodb_licomp_242';
+
+-- comando para listar as checks
+select constraint_name, check_clause
+from information_schema.check_constraints
+where constraint_schema = 'bancodb_licomp_242';
+
+-- faça com que a coluna email de clientes nunca aceite valores repetidos
+alter table clientes
+add constraint clientes_email_uq unique(email);
+
+-- excluindo a regra unique de email
+alter table clientes
+drop constraint clientes_email_uq;
+
+-- adicionando regras para dia e mes niver slide 23
+alter table clientes
+add constraint clientes_dia_ck check(dia_niver >= 1 and dia_niver <= 31),
+add constraint clientes_mes_ck check(mes_niver >= 1 and mes_niver <= 31);
+
+-- alter table produtos
+-- modify unidade varchar(50) default 'unidades';
+
+-- modifique a tabela clientes, de modo que caso o dia_niver não seja informado, o banco assuma o dia do seu aniversário
+alter table clientes
+modify dia_niver int default 7;
+
+--Criar a tabela agências
+create table agencias(
+numero varchar(100)not null,
+nome varchar(100) not null,
+telefone int not null,
+banco int
+);
+
+--adicionando regra
+alter table agencias
+add constraint numero_key primary key(numero);
+
+Alter table agencias
+add constraint agencias_nome_uq unique(nome),
+add constraint agencias_telefone_uq unique(telefone);
+
+alter table bancos
+add constraint bancos_nome_uq unique(nome);
+
+--Crie a tabela Contas, dentro do banco bancoDB,contendo os seguintes campos e registros:
+Alter table agencias
+add banco int;
+
+--adicionado chave estrangeira
+Alter table agencias
+add constraint banco_agencias_fk foreign key (banco)
+references bancos(numero);
+
+CREATE DATABASE bancoDB
+
+CREATE TABLE Contas(
+id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
+idClient INT NOT NULL, 
+tipo VARCHAR(100) NOT NULL,
+saldo FLOAT NOT NULL,
+limite FLOAT NOT NULL,
+FOREIGN KEY(idClient) REFERENCES clientes(id)
+
+);
+
+--CRIAR CLIENTES 
+INSERT INTO clientes(id, nome) values (2, "Maria");
+INSERT INTO clientes(id, nome) values (3, "José");
+
+INSERT INTO Contas(idClient, tipo, limite, saldo) values (1,"Corrente Comum", 1000, 3000);
+INSERT INTO Contas(idClient, tipo, limite, saldo) values (2,"Poupança", 100, 2000);
+INSERT INTO Contas(idClient, tipo, limite, saldo) values (3,"Corrente Especial", 1500, 2500);
+
+UPDATE contas set limite = 2000 where tipo="Corrente Comum";
+UPDATE contas set tipo = "Poupanca" where idClient = 2;
+UPDATE contas set saldo = 4000 where tipo="Poupanca";
+
+INSERT INTO clientes(nome) values("Rosen");
+SELECT * FROM clientes;
+
+UPDATE Contas set idClient = 4 where tipo="Corrente Especial";
+
+
+SELECT * FROM Contas;
+SHOW TABLES FROM academicos;
+SELECT * FROM instituicoes;
+-- mostrar a descrição da tabela
+DESCRIBE instituicoes;
+
+-- Adicionar uma nova coluna a uma tabela
+ALTER TABLE instituicoes ADD COLUMN ins_email varchar(255);
+ALTER TABLE instituicoes ADD COLUMN ins_uf char(2) default 'RJ';
+
+INSERT INTO instituicoes(ins_nome, ins_email, ins_uf) values ("XPTO","xpto@email.com", "BA");
+INSERT INTO instituicoes(ins_nome, ins_email,ins_uf) values ("House Software", "housesoft@hack.mail.com", "RJ");
+INSERT INTO instituicoes(ins_nome, ins_email,ins_uf) values ("Movies Studio", "mv@films.org", "RS");
+INSERT INTO instituicoes(ins_nome, ins_email,ins_uf) values ("Enhancements Worker", "workerenchancements@mail.com", "SP");
+
+UPDATE instituicoes 
+set ins_uf = 'CE', ins_email='xptoce@mail.net' 
+where ins_nome='XPTO';
